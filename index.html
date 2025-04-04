@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lua/JS Communication</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        #output {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            min-height: 50px;
+            background-color: #f9f9f9;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Lua &lt;-&gt; JavaScript Communication Example</h1>
+
+    <canvas id="myCanvas" width="200" height="100"></canvas>
+    <button onclick="sendPingToLua()">Send Ping to Lua</button>
+    <button onclick="triggerLuaPing()">Trigger Ping from Lua</button>
+    <button onclick="draw()">Trigger Ping from Lua</button>
+
+
+    <div id="output"></div>
+
+    <!-- Include lua.vm.js (ensure the path is correct) -->
+    <script src="lua.vm.js"></script>
+    <script src="fengari-web.js" type="text/javascript"></script>
+
+    <!-- Lua Script -->
+    <script type="text/lua" src="script.lua"> </script>
+
+    <script>
+
+        function draw() {
+            fengari.load(`draw()`)();
+        }
+    </script>
+    <!--    <!-- JavaScript Script -->-->
+    <!--    <script>-->
+    <!--        const outputDiv = document.getElementById('output');-->
+    <!---->
+    <!---->
+    <!--        // Function called by Lua-->
+    <!--        function handlePingFromLua(message) {-->
+    <!--            outputDiv.innerHTML += `<p>JavaScript received: ${message}</p>`;-->
+    <!--            console.log('JavaScript received ping from Lua:', message);-->
+    <!--        }-->
+    <!---->
+    <!--        // Function to send a ping to Lua-->
+    <!--        function sendPingToLua() {-->
+    <!---->
+    <!--            const message = 'Ping from JavaScript!';-->
+    <!--            try {-->
+    <!---->
+    <!--                // Use fengari.load (common with lua.vm.js) to execute Lua code.-->
+    <!--                // This calls the global Lua function 'handlePingFromJS'.-->
+    <!--                // Ensure the Lua function is defined globally within the Lua script tag.-->
+    <!--                if (typeof fengari !== 'undefined' && fengari.load) {-->
+    <!--                    // Escape the message for Lua string literal-->
+    <!---->
+    <!--                    const escapedMessage = message.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');-->
+    <!--                    fengari.load(`handlePingFromJS("${escapedMessage}")`)(); // Load and execute-->
+    <!---->
+    <!--                    outputDiv.innerHTML += `<p>JavaScript sent: ${message}</p>`;-->
+    <!---->
+    <!--                    console.log('JavaScript sent ping to Lua:', message);-->
+    <!--                } else {-->
+    <!---->
+    <!--                    const errorMsg = "JS->Lua Error: Cannot find fengari.load(). Lua execution mechanism not found.";-->
+    <!--                    console.error(errorMsg);-->
+    <!--                    outputDiv.innerHTML += `<p style="color: red;">${errorMsg}</p>`;-->
+    <!--                }-->
+    <!--            } catch (error) {-->
+    <!--                const errorMsg = `JS->Lua Error: ${error.message}`;-->
+    <!---->
+    <!--                console.error("Error sending ping to Lua:", error);-->
+    <!--                outputDiv.innerHTML += `<p style="color: red;">${errorMsg}</p>`;-->
+    <!--            }-->
+    <!--        }-->
+    <!---->
+    <!--        // Function to trigger the Lua function that sends a ping back to JS-->
+    <!--        function triggerLuaPing() {-->
+    <!--            try {-->
+    <!--                // Call the global Lua function 'sendPingToJS' from JavaScript-->
+    <!--                if (typeof fengari !== 'undefined' && fengari.load) {-->
+    <!--                    fengari.load('sendPingToJS()')(); // Load and execute-->
+    <!--                    console.log('JavaScript triggered Lua to send ping.');-->
+    <!--                } else {-->
+    <!--                    const errorMsg = "Lua->JS Trigger Error: Cannot find fengari.load(). Lua execution mechanism not found.";-->
+    <!---->
+    <!--                    console.error(errorMsg);-->
+    <!--                    outputDiv.innerHTML += `<p style="color: red;">${errorMsg}</p>`;-->
+    <!--                }-->
+    <!--            } catch (error) {-->
+    <!--                const errorMsg = `Lua->JS Trigger Error: ${error.message}`;-->
+    <!--                console.error("Error triggering Lua ping:", error);-->
+    <!--                outputDiv.innerHTML += `<p style="color: red;">${errorMsg}</p>`;-->
+    <!--            }-->
+    <!---->
+    <!--        }-->
+    <!---->
+    <!--        // Initial message from JS on load-->
+    <!---->
+    <!--        console.log('JavaScript loaded.');-->
+    <!--        outputDiv.innerHTML += '<p>Page loaded. Ready for pings.</p>';-->
+    <!---->
+    <!--    </script>-->
+    <!---->
+    <!--</body>-->
+    <!---->
+    <!--</html>-->
