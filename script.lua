@@ -6,7 +6,7 @@ local DEBUG = true
 local START_TIME = js.global.window.start_time
 
 -- panel and settings constants
-local DEFAULT_DIFFICULTY = "medium" -- options: easy, medium, hard, very-hard, impossible
+local DEFAULT_DIFFICULTY = "hard" -- options: easy, medium, hard, very-hard, impossible
 local DEFAULT_GRID_SIZE = 12 -- default grid dimension if size not provided
 local SPEEDS = {
 	easy = 5,
