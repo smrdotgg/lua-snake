@@ -6,7 +6,7 @@ local DEBUG = true
 local START_TIME = js.global.window.start_time
 
 -- dials to adjust
-local CELL_PER_SECOND = 7
+local CELL_PER_SECOND = 10
 local CELL_DIMENTION = 12
 
 local state = {
