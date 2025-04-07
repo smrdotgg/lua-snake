@@ -6,7 +6,7 @@ local DEBUG = true
 local START_TIME = js.global.window.start_time
 
 -- dials to adjust
-local CELL_PER_SECOND = 7
+local CELL_PER_SECOND = 10
 local CELL_DIMENTION = 12
 
 local state = {
@@ -24,6 +24,7 @@ local state = {
 local latest_event = nil -- nil | "up" | "down" | "right" | "left"
 
 -- Generate food at a random position that's not occupied by the snake
+
 function generateFood()
 	local valid = false
 	local x, y
@@ -99,6 +100,7 @@ local function update_new_cell()
 			return { new_x, new_y }
 		elseif direction == "left" then
 			jsPrint(last_two_cells)
+
 			local new_x = (function()
 				if last_two_cells[2][1] == 0 then
 					return CELL_DIMENTION - 1
@@ -148,6 +150,7 @@ function gameLoopCore()
 		update_new_cell()
 	end
 	renderGrid()
+
 	renderFood()
 	renderSnake()
 
@@ -158,14 +161,33 @@ end
 
 function renderFood()
 	if state.food then
-		ctx.fillStyle = "#FFFF00" -- Yellow
+		-- Higher contrast gray for food
+		ctx.fillStyle = "#BDBDBD"
 		ctx:fillRect(gridStartX + (state.food[1] * boxSize), gridStartY + (state.food[2] * boxSize), boxSize, boxSize)
+
+		-- Draw black X at the center
+		ctx.strokeStyle = "#000000"
+		ctx.lineWidth = 2
+
+		local x = gridStartX + (state.food[1] * boxSize)
+		local y = gridStartY + (state.food[2] * boxSize)
+		local padding = boxSize * 0.2 -- 20% padding for X
+
+		-- Draw X
+		ctx:beginPath()
+		ctx:moveTo(x + padding, y + padding)
+		ctx:lineTo(x + boxSize - padding, y + boxSize - padding)
+		ctx:stroke()
+
+		ctx:beginPath()
+		ctx:moveTo(x + boxSize - padding, y + padding)
+		ctx:lineTo(x + padding, y + boxSize - padding)
+		ctx:stroke()
 	end
 end
 
 function renderGameOver()
 	-- Dim overlay
-
 	ctx.fillStyle = "rgba(0, 0, 0, 0.7)"
 	ctx:fillRect(0, 0, canvas.width, canvas.height)
 
@@ -175,6 +197,7 @@ function renderGameOver()
 	ctx.textAlign = "center"
 
 	-- Center text
+
 	local centerX = canvas.width / 2
 	local centerY = canvas.height / 2
 
@@ -192,7 +215,6 @@ local function gameLoop()
 	gameLoopCore()
 
 	-- Schedule the next iteration using JavaScript's setTimeout
-
 	js.global:setInterval(gameLoopCore, 10) -- 10ms interval
 end
 
@@ -201,8 +223,7 @@ function renderSnake()
 	for cell_index = 2, #state.snake_cells - 1 do -- THIS LINE
 		local startingX = state.snake_cells[cell_index][1]
 		local startingY = state.snake_cells[cell_index][2]
-		ctx.fillStyle = "#ff0000"
-		ctx.strokeStyle = "#00ff00"
+		ctx.fillStyle = "#E0E0E0" -- Higher contrast gray/white
 		ctx:fillRect(gridStartX + (startingX * boxSize), gridStartY + (startingY * boxSize), boxSize, boxSize)
 	end
 
@@ -236,8 +257,7 @@ function renderAnimatedTail()
 	if tail_direction == "right" then
 		local startingX = state.snake_cells[1][1]
 		local startingY = state.snake_cells[1][2]
-		ctx.fillStyle = "#ff0000"
-		ctx.strokeStyle = "#00ff00"
+		ctx.fillStyle = "#E0E0E0" -- Higher contrast gray/white
 
 		ctx:fillRect(
 			gridStartX + ((startingX + fraction_gone) * boxSize), -- start x
@@ -248,20 +268,13 @@ function renderAnimatedTail()
 	elseif tail_direction == "down" then
 		local startingX = state.snake_cells[1][1]
 		local startingY = state.snake_cells[1][2]
-		ctx.fillStyle = "#ff0000"
+		ctx.fillStyle = "#E0E0E0" -- Higher contrast gray/white
 
-		ctx.strokeStyle = "#00ff00"
-		ctx:fillRect(
-			gridStartX + (startingX * boxSize),
-			gridStartY + ((startingY + fraction_gone) * boxSize),
-			boxSize,
-			boxSize * (1 - fraction_gone)
-		)
+		ctx:fillRect(gridStartX + (startingX * boxSize), gridStartY + ((startingY + fraction_gone) * boxSize), boxSize, boxSize * (1 - fraction_gone))
 	elseif tail_direction == "left" then
 		local startingX = state.snake_cells[1][1]
 		local startingY = state.snake_cells[1][2]
-		ctx.fillStyle = "#ff0000"
-		ctx.strokeStyle = "#00ff00"
+		ctx.fillStyle = "#E0E0E0" -- Higher contrast gray/white
 
 		ctx:fillRect(
 			gridStartX + (startingX * boxSize), -- start x
@@ -272,13 +285,13 @@ function renderAnimatedTail()
 	elseif tail_direction == "up" then
 		local startingX = state.snake_cells[1][1]
 		local startingY = state.snake_cells[1][2]
-		ctx.fillStyle = "#ff0000"
-		ctx.strokeStyle = "#00ff00"
+		ctx.fillStyle = "#E0E0E0" -- Higher contrast gray/white
+
 		ctx:fillRect(
 			gridStartX + (startingX * boxSize), -- start x
-
 			gridStartY + (startingY * boxSize), -- start x
 			boxSize,
+
 			boxSize * (1 - fraction_gone)
 		)
 	end
@@ -288,20 +301,16 @@ function renderAnimatedHead()
 	if state.direction == "right" then
 		local startingX = state.snake_cells[#state.snake_cells][1]
 		local startingY = state.snake_cells[#state.snake_cells][2]
-		ctx.fillStyle = "#ff0000"
-		ctx.strokeStyle = "#00ff00"
-		ctx:fillRect(
-			gridStartX + (startingX * boxSize),
-			gridStartY + (startingY * boxSize),
-			boxSize * fraction_gone,
-			boxSize
-		)
+		ctx.fillStyle = "#E0E0E0" -- Higher contrast gray/white
+
+		ctx:fillRect(gridStartX + (startingX * boxSize), gridStartY + (startingY * boxSize), boxSize * fraction_gone, boxSize
+)
 	elseif state.direction == "down" then
 		local startingX = state.snake_cells[#state.snake_cells][1]
 		local startingY = state.snake_cells[#state.snake_cells][2]
 
-		ctx.fillStyle = "#ff0000"
-		ctx.strokeStyle = "#00ff00"
+		ctx.fillStyle = "#E0E0E0" -- Higher contrast gray/white
+
 		ctx:fillRect(
 			gridStartX + (startingX * boxSize),
 			gridStartY + (startingY * boxSize),
@@ -311,9 +320,10 @@ function renderAnimatedHead()
 	elseif state.direction == "left" then
 		local startingX = state.snake_cells[#state.snake_cells][1]
 		local startingY = state.snake_cells[#state.snake_cells][2]
-		ctx.fillStyle = "#ff0000"
-		ctx.strokeStyle = "#00ff00"
+		ctx.fillStyle = "#E0E0E0" -- Higher contrast gray/white
+
 		ctx:fillRect(
+
 			gridStartX + ((startingX + 1 - fraction_gone) * boxSize),
 			gridStartY + (startingY * boxSize),
 			boxSize * fraction_gone,
@@ -323,8 +333,8 @@ function renderAnimatedHead()
 		local startingX = state.snake_cells[#state.snake_cells][1]
 		local startingY = state.snake_cells[#state.snake_cells][2]
 
-		ctx.fillStyle = "#ff0000"
-		ctx.strokeStyle = "#00ff00"
+		ctx.fillStyle = "#E0E0E0" -- Higher contrast gray/white
+
 		ctx:fillRect(
 			gridStartX + (startingX * boxSize),
 			gridStartY + ((startingY + 1 - fraction_gone) * boxSize),
@@ -341,8 +351,8 @@ function resizeCanvas()
 end
 
 function drawBorder()
-	-- Draw the blue border
-	ctx.strokeStyle = "red"
+	-- Draw the border
+	ctx.strokeStyle = "#555555"
 
 	ctx.lineWidth = 15 -- Adjust thickness as needed
 	ctx:strokeRect(0, 0, canvas.width, canvas.height)
@@ -351,7 +361,6 @@ end
 function main()
 	js.global.window:addEventListener("resize", function()
 		resizeCanvas()
-
 		renderGrid()
 	end)
 	js.global.document:addEventListener("keydown", function(document, event)
@@ -364,6 +373,7 @@ function main()
 				direction = "left",
 				next_direction = nil,
 				food = nil,
+
 				score = 0,
 				game_over = false,
 			}
@@ -411,18 +421,17 @@ function renderGrid()
 
 	boxSize = (endingY - gridStartY) / CELL_DIMENTION
 
-	ctx.fillStyle = "gray"
+	ctx.fillStyle = "#333333" -- Dark gray background
 	ctx:fillRect(gridStartX, gridStartY, constraint, constraint)
 
-	ctx.lineWidth = 1 -- Adjust thickness as needed
-	ctx.strokeStyle = "green"
+	ctx.lineWidth = 1
 	for x = 0, CELL_DIMENTION - 1 do
 		for y = 0, CELL_DIMENTION - 1 do
 			local xIsOdd = (x % 2) == 1
 			local yIsOdd = (y % 2) == 1
 			local parityIsSimilar = (xIsOdd == yIsOdd)
-			ctx.fillStyle = parityIsSimilar and "#111111" or "#221151"
-			ctx.strokeStyle = parityIsSimilar and "#111111" or "#221151"
+			-- Two different gray tones for the grid
+			ctx.fillStyle = parityIsSimilar and "#2A2A2A" or "#333333"
 
 			ctx:fillRect(gridStartX + (x * boxSize), gridStartY + (y * boxSize), boxSize, boxSize)
 		end
@@ -507,6 +516,7 @@ function stringify(tbl, indent)
 			end
 			str = str .. next_indent
 			-- Key (assuming string or number keys for simplicity)
+
 			if type(key) == "string" then
 				str = str .. '"' .. key .. '": '
 			else
@@ -515,6 +525,7 @@ function stringify(tbl, indent)
 
 			-- Value
 			local value_type = type(value)
+
 			if value_type == "table" then
 				str = str .. stringify(value, next_indent)
 			elseif value_type == "string" then
