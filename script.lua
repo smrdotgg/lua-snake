@@ -585,6 +585,8 @@ function renderGrid()
 
 	boxSize = (endingY - gridStartY) / CELL_DIMENTION
 
+	ctx.fillStyle = "black"
+	ctx:fillRect(0, 0, js.global.window.innerWidth, js.global.window.innerHeight)
 	ctx.fillStyle = "#333333"
 	ctx:fillRect(gridStartX, gridStartY, constraint, constraint)
 
