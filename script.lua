@@ -3,7 +3,7 @@ local ctx = canvas:getContext("2d")
 local DEBUG = true
 
 -- constants
-local START_TIME = js.global.window.start_time
+local START_TIME = js.global.document.start_time
 
 -- panel and settings constants
 local DEFAULT_DIFFICULTY = "medium" -- options: easy, medium, hard, very-hard, impossible
@@ -186,7 +186,7 @@ local function update_new_cell()
 		state.game_over = true
 	end
 
-	state.new_cell_entry_time = js.global.window:get_time()
+	state.new_cell_entry_time = js.global.document:get_time()
 end
 
 function gameLoopCore()
@@ -196,7 +196,7 @@ function gameLoopCore()
 		generateFood()
 	end
 
-	local current_time = js.global.window:get_time()
+	local current_time = js.global.document:get_time()
 	local transition_ended = (current_time - state.new_cell_entry_time) / 1000 >= (1 / CELL_PER_SECOND)
 
 	if transition_ended and not state.game_over then
@@ -287,7 +287,7 @@ function renderSnake()
 	end
 
 	-- Render animated cells
-	local time_now = js.global.window:get_time()
+	local time_now = js.global.document:get_time()
 	local time_gone = (time_now - state.new_cell_entry_time) / 1000
 
 	fraction_gone = time_gone / (1 / CELL_PER_SECOND)
@@ -523,10 +523,10 @@ function main()
 	js.global.document:addEventListener("keydown", function(document, event)
 		if state.game_over and event.key == " " then
 			state = {
-				last_frame_time = js.global.window:get_time(),
+				last_frame_time = js.global.document:get_time(),
 				snake_cells = { { 5, 4 }, { 4, 4 }, { 3, 4 }, { 2, 4 } },
 
-				new_cell_entry_time = js.global.window:get_time(),
+				new_cell_entry_time = js.global.document:get_time(),
 				direction = "left",
 				next_direction = nil,
 				food = nil,
